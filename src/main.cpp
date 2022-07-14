@@ -95,6 +95,8 @@ int main(int argc, char *argv[]) {
     i32 w, h;
     glfwGetWindowSize(window, &w, &h);
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     RendererInit(w, h);
     InitializeInput(window);
 

@@ -102,7 +102,7 @@ void main() {
             position = imageLoad(worldPositionImage, computeCoord, 0).rgb;
             specular_emission_diffuse_ssao_bloom = imageLoad(specular_emission_diffuse_ssao_bloom_Image, computeCoord, 0).rgba;
 
-            spec = specular(directional_light.direction, normal.xyz, camera.eye, position, specular_emission_diffuse_ssao_bloom.r, specular_emission_diffuse_ssao_bloom.r);
+            spec = specular(directional_light.direction, normal.xyz, camera.eye, position, specular_emission_diffuse_ssao_bloom.r, specular_emission_diffuse_ssao_bloom.g);
 
             int diffuseEnabled = int(specular_emission_diffuse_ssao_bloom.z / 10.0);
 
@@ -118,14 +118,11 @@ void main() {
             float dist = length(camera.eye - position);
             float fogFactor = getFogFactor(dist, sightRangeFactor);
             finalColor += mix(fogColor, sampleColor, fogFactor);
+            // finalColor = vec3(spec);
         } else {
             finalColor = albedo;
         }
-
-        finalColor = albedo;
     }
 
-    float s = imageLoad(sampleCoverageMask, computeCoord).r;
-
-    imageStore(defferedSceneImage, computeCoord, vec4(s, 0, 0, 1.0));
+    imageStore(defferedSceneImage, computeCoord, vec4(finalColor, 1.0));
 }

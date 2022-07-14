@@ -15,7 +15,7 @@ uniform int width;
 uniform int height;
 
 const vec3 sunBaseColor = vec3(1.0,0.79,0.43);
-const float r_Sun = 0.24;
+const float r_Sun = 0.25;
 const vec3 v_SunWorld = vec3(-0.6527264, -0.42568117, -0.62669265);
 
 void main() {
@@ -47,8 +47,8 @@ void main() {
         outLightScattering = mix(vec3(0), sunBaseColor, smoothRadius);
     }
 
-    albedo_out = texture(skybox, outUV);
-    //albedo_out = vec4(vec3(sunRadius), 1.0);
+    //albedo_out = texture(skybox, outUV);
+    albedo_out = vec4(outColor, 1.0);
     worldPosition_out = vec4(0, 0, 0, 0);
     normal_out = vec4(0, 0, 0, 0);
     specular_emmision_diffuse_ssao_bloom_out = vec4(0, 0, 0, 0);

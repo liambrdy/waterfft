@@ -9,14 +9,14 @@ void RendererInit(u32 width, u32 height) {
     CameraCreate(&renderer.camera, glm::vec3(0.0f, 3.0f, 0.0f), width, height);
     renderer.world = glm::mat4(1.0f);
 
-    renderer.samples = 2;
+    renderer.samples = 1;
     OffscreenFramebufferCreate(&renderer.primaryFbo, width, height, renderer.samples);
 
     SampleCoverageCreate(&renderer.sampleCoverage, width, height);
 
     FullscreenQuadCreate(&renderer.quad);
 
-    renderer.light.direction = glm::normalize(glm::vec3(-0.6527264f, -0.42568117f, -0.62669265f));
+    renderer.light.direction = glm::normalize(glm::vec3(0.6527264f, -0.42568117f, 0.62669265f));
     renderer.light.ambient = glm::vec3(0.01f);
     renderer.light.color = glm::vec3(1.0f, 0.95f, 0.87f);
     renderer.light.intensity = 1.0f;
@@ -46,6 +46,6 @@ void RendererEndFrame() {
                            &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::Normal),
                            &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::SpecularEmissionDiffuseSSAOBloom));
 
-    FullscreenQuadRenderMS(&renderer.quad, &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::Position));
-    //FullscreenQuadRender(&renderer.quad, &renderer.sampleCoverage.lightScatteringMaskSingleSample);
+    //FullscreenQuadRenderMS(&renderer.quad, &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::Position));
+    FullscreenQuadRender(&renderer.quad, &renderer.lighting.deferredLightingSceneTexture);
 }

@@ -108,9 +108,9 @@ void CameraInput(Camera *camera) {
         input.keyDown[KeyUp] || input.keyDown[KeyDown] || input.keyDown[KeyLeft] || input.keyDown[KeyRight];
 
     if (input.keyDown[KeyA]) {
-            camera->pos += camera->right * 0.5f;
+        camera->pos += glm::normalize(glm::cross(camera->forward, camera->up)) * 0.5f;
     } else if (input.keyDown[KeyD]) {
-        camera->pos -= camera->right * 0.5f;
+        camera->pos -= glm::normalize(glm::cross(camera->forward, camera->up)) * 0.5f;
     }
     if (input.keyDown[KeyW]) {
         camera->pos += camera->forward * 0.5f;
