@@ -117,6 +117,7 @@ void WaterRender(Water *water, Camera *camera, std::function<void()> renderFunc)
     glViewport(0, 0, renderer.windowWidth/2, renderer.windowHeight/2);
 
     renderer.world = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, -1.0f, 1.0f));
+    renderer.isReflection = 1;
 
     FramebufferBind(&water->reflectionFbo);
     FramebufferClear();
@@ -129,6 +130,7 @@ void WaterRender(Water *water, Camera *camera, std::function<void()> renderFunc)
     FramebufferUnbind();
 
     renderer.world = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
+    renderer.isReflection = 0;
 
     FramebufferBind(&water->refractionFbo);
     FramebufferClear();

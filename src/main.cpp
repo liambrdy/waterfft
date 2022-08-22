@@ -25,12 +25,13 @@
 
 #include "normalRenderer.h"
 
-#include "skybox.h"
+#include "atmosphere.h"
 
 #include "framebuffer.h"
 #include "renderer.h"
 
 #include "water.h"
+#include "model.h"
 
 void APIENTRY glDebugOutput(GLenum source,
                             GLenum type,
@@ -116,15 +117,8 @@ int main(int argc, char *argv[]) {
 
     //glm::mat4 world = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 5.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(150.0f));
 
-    Skybox skybox;
-    SkyboxCreate(&skybox, {
-            "res/skybox/right.jpg",
-            "res/skybox/left.jpg",
-            "res/skybox/top.jpg",
-            "res/skybox/bottom.jpg",
-            "res/skybox/front.jpg",
-            "res/skybox/back.jpg"
-        });
+    Atmosphere skybox;
+    AtmosphereCreate(&skybox);
 
     f32 ZFAR = 10000.0f;
 
@@ -133,10 +127,24 @@ int main(int argc, char *argv[]) {
     water.waterConfig.choppy = true;
     WaterCreate(&water, 128);
 
+    Shader sphereShader;
+    Model sphere;
+    ShaderCreateInfo sphereInfo;
+    sphereInfo.shaders = {"res/shaders/sphere.vert", "res/shaders/sphere.frag"};
+    sphereInfo.shaderBits.set(VertexShader);
+    sphereInfo.shaderBits.set(FragmentShader);
+    ModelLoad(&sphere, "res/models/sphere.obj");
+    sphere.model = glm::scale(glm::mat4(1.0f), glm::vec3(20.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    ShaderCreate(&sphereShader, &sphereInfo);
+
     auto &&render = [&]() {
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        SkyboxRender(&skybox, &renderer.camera);
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        ShaderBind(&sphereShader);
+        ModelSetUniforms(&sphere, &sphereShader);
+        ModelRender(&sphere);
+
+        AtmosphereRender(&skybox, &renderer.camera);
+//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     };
 
     while (!glfwWindowShouldClose(window)) {

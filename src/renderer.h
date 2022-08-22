@@ -9,8 +9,11 @@
 
 #include "fullscreenQuad.h"
 #include "deferredLighting.h"
+#include "ssao.h"
 
 #include <glm/glm.hpp>
+
+#include <assimp/Importer.hpp>
 
 struct DirectionalLight {
     glm::vec3 direction;
@@ -23,6 +26,7 @@ struct Renderer {
     u32 windowWidth, windowHeight;
 
     Camera camera;
+    f32 zFar;
     glm::mat4 world;
 
     OffscreenFramebuffer primaryFbo;
@@ -34,6 +38,11 @@ struct Renderer {
 
     DeferredLighting lighting;
     DirectionalLight light;
+    u32 isReflection;
+
+    SSAO ssao;
+
+    Assimp::Importer importer;
 };
 
 extern Renderer renderer;

@@ -50,16 +50,17 @@ uniform vec2 wind;
 const float Eta = 0.15;
 //const float Eta = 0.00001;
 const float zfar = 10000;
-const float znear = 0.1;
+const float znear = 0.01;
 
-float fresnelApproximated(vec3 normal, vec3 vertexToEye) {
+float fresnelApproximated(vec3 normal, vec3 vertexToEye)
+{
     vec3 halfDirection = normalize(normal + vertexToEye);
 
     float cosine = dot(halfDirection, vertexToEye);
 
     float fresnel = Eta + (1.0 - Eta) * pow(max(0.0, 1.0 - dot(vertexToEye, normal)), fresnelFactor);
 
-    return clamp(pow(fresnel, 1.0), 0.0, 1.0);
+    return clamp(pow(fresnel, 1.0),0.0,1.0);
 }
 
 void main() {
@@ -72,8 +73,10 @@ void main() {
     normal = normalize(normal);
 
     float fresnel = fresnelApproximated(normal.xyz, vertexToEye);
+    //fresnel = smoothstep(0, 1, fresnel);
+    //float fresnel = 0.5;
 
-    if (dist < highDetailRange-50.0){
+    if (dist < highDetailRange - 50.0){
         float attenuation = clamp(-dist/(highDetailRange-50) + 1,0.0,1.0);
         vec3 bitangent = normalize(cross(inTangent, normal));
         mat3 TBN = mat3(inTangent,bitangent,normal);
@@ -99,11 +102,12 @@ void main() {
     refraction *= 1 - fresnel;
 
     vec3 fragColor = reflection + refraction;
-    //fragColor = dudvCoord;
+    //fragColor = vec3(fresnel);
+    //fragColor = vertexToEye;
 
     albedo_out = vec4(fragColor, 1.0);
     worldPosition_out = vec4(inPosition, 1.0);
     normal_out = vec4(normal, 1);
-    specular_emmision_diffuse_ssao_bloom_out = vec4(200, 2.0, 0, 1);
+    specular_emmision_diffuse_ssao_bloom_out = vec4(200, 2.0, 1.0, 1);
     lightScattering_out = vec4(0, 0, 0, 1);
 }

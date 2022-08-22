@@ -85,10 +85,10 @@ void CameraCreate(Camera *camera, glm::vec3 eye, float width, float height) {
     camera->view = glm::lookAt(eye, eye + camera->forward, camera->up);
     camera->projection = glm::perspective(glm::radians(45.0f), width / height, 0.01f, 10000.0f);
     camera->viewProj = camera->projection * camera->view;
+    camera->originView = glm::lookAt(camera->forward, glm::vec3(0.0f), camera->up);
+    camera->originViewProj = camera->projection * camera->originView;
 
     CreateFrustumPlanes(camera);
-
-    std::printf("%f, %f, %f, %f\n", camera->frustumPlanes[0].x, camera->frustumPlanes[0].y, camera->frustumPlanes[0].z, camera->frustumPlanes[0].w);
 
     CameraBufferData bufferData;
     GetCameraBufferData(camera, &bufferData);
@@ -96,6 +96,9 @@ void CameraCreate(Camera *camera, glm::vec3 eye, float width, float height) {
     glCreateBuffers(1, &camera->buffer);
     glBindBuffer(GL_UNIFORM_BUFFER, camera->buffer);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(bufferData), &bufferData, GL_DYNAMIC_DRAW);
+
+    camera->lastXPos = input.xMouse;
+    camera->lastYPos = input.yMouse;
 }
 
 void CameraBind(Camera *camera, Shader *shader) {
@@ -108,9 +111,9 @@ void CameraInput(Camera *camera) {
         input.keyDown[KeyUp] || input.keyDown[KeyDown] || input.keyDown[KeyLeft] || input.keyDown[KeyRight];
 
     if (input.keyDown[KeyA]) {
-        camera->pos += glm::normalize(glm::cross(camera->forward, camera->up)) * 0.5f;
-    } else if (input.keyDown[KeyD]) {
         camera->pos -= glm::normalize(glm::cross(camera->forward, camera->up)) * 0.5f;
+    } else if (input.keyDown[KeyD]) {
+        camera->pos += glm::normalize(glm::cross(camera->forward, camera->up)) * 0.5f;
     }
     if (input.keyDown[KeyW]) {
         camera->pos += camera->forward * 0.5f;
@@ -123,13 +126,38 @@ void CameraInput(Camera *camera) {
         camera->pos -= camera->up * 0.1f;
     }
 
-    if (moved)
+    if (input.mouseMoved) {
+        f32 xOffset = input.xMouse - camera->lastXPos;
+        f32 yOffset = camera->lastYPos - input.yMouse;
+        camera->lastXPos = input.xMouse;
+        camera->lastYPos = input.yMouse;
+
+        f32 sensitivity = 0.1f;
+        xOffset *= sensitivity;
+        yOffset *= sensitivity;
+
+        camera->yaw += xOffset;
+        camera->pitch += yOffset;
+
+        camera->pitch = std::min(89.0f, std::max(-89.0f, camera->pitch));
+
+        glm::vec3 front;
+        front.x = std::cos(glm::radians(camera->yaw)) * std::cos(glm::radians(camera->pitch));
+        front.y = std::sin(glm::radians(camera->pitch));
+        front.z = std::sin(glm::radians(camera->yaw)) * std::cos(glm::radians(camera->pitch));
+        camera->forward = glm::normalize(front);
+    }
+
+    if (moved || input.mouseMoved)
         CameraUpdateMatrices(camera);
 }
 
 void CameraUpdateMatrices(Camera *camera) {
     camera->view = glm::lookAt(camera->pos, camera->pos + camera->forward, camera->up);
     camera->viewProj = camera->projection * camera->view;
+
+    camera->originView = glm::lookAt(camera->pos, glm::vec3(0.0f), camera->up);
+    camera->originViewProj = camera->projection * camera->originView;
 
     CreateFrustumPlanes(camera);
 

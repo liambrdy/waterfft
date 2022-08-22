@@ -6,17 +6,17 @@
 #include "shader.h"
 #include "mesh.h"
 #include "camera.h"
+#include "model.h"
 
 #include <vector>
 #include <string>
 
-struct Skybox {
-    u32 texture;
-    Mesh box;
+struct Atmosphere {
+    Model dome;
     Shader shader;
 };
 
-void SkyboxCreate(Skybox *skybox, const std::vector<std::string> &paths);
-void SkyboxRender(Skybox *skybox, Camera *camera);
+void AtmosphereCreate(Atmosphere *atmosphere);
+void AtmosphereRender(Atmosphere *atmosphere, Camera *camera);
 
 #endif // SKYBOX_H_

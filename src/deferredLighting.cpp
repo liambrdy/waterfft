@@ -32,7 +32,7 @@ void DeferredLightingCreate(DeferredLighting *lighting) {
     ShaderCreate(&lighting->shader, &info);
 }
 
-void DeferredLightingRender(DeferredLighting *lighting, Texture *sampleCoverage, Texture *albedo, Texture *worldPosition, Texture *normal, Texture *specularEmissionDiffuseSsaoBloom) {
+void DeferredLightingRender(DeferredLighting *lighting, Texture *sampleCoverage, Texture *ssaoBlur, Texture *albedo, Texture *worldPosition, Texture *normal, Texture *specularEmissionDiffuseSsaoBloom) {
     glFinish();
 
     ShaderBind(&lighting->shader);
@@ -52,6 +52,7 @@ void DeferredLightingRender(DeferredLighting *lighting, Texture *sampleCoverage,
     glBindImageTexture(3, normal->id, 0, false, 0, GL_READ_ONLY, GL_RGBA16F);
     glBindImageTexture(4, specularEmissionDiffuseSsaoBloom->id, 0, false, 0, GL_READ_ONLY, GL_RGBA16F);
     glBindImageTexture(5, sampleCoverage->id, 0, false, 0, GL_READ_ONLY, GL_R8);
+    glBindImageTexture(6, ssaoBlur->id, 0, false, 0, GL_READ_ONLY, GL_R16F);
 
     glDispatchCompute(renderer.windowWidth / 2, renderer.windowHeight / 2, 1);
 }

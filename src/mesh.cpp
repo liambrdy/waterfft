@@ -2,6 +2,8 @@
 
 #include <glad/glad.h>
 
+#include "model.h"
+
 const std::vector<float> quadVertices = {
 -1.0f, -1.0f, 0.0f, 0.0f,
 1.0f, -1.0f, 1.0f, 0.0f,
@@ -39,6 +41,31 @@ void MeshCreate(Mesh *mesh, const std::vector<glm::vec3> &positions) {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
     mesh->count = positions.size();
+}
+
+void MeshCreate(Mesh *mesh, const std::vector<ModelVertex> &vertices, const std::vector<u32> &indices) {
+    glCreateVertexArrays(1, &mesh->vao);
+    glBindVertexArray(mesh->vao);
+
+    glCreateBuffers(1, &mesh->vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (const void *)(3 * sizeof(float)));
+
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (const void *)(6 * sizeof(float)));
+
+    u32 ebo;
+    glCreateBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(u32) * indices.size(), indices.data(), GL_STATIC_DRAW);
+
+    mesh->count = indices.size();
 }
 
 void MeshCreateQuad(Mesh *mesh) {

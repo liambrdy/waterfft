@@ -35,11 +35,12 @@ struct WaterConfig {
     f32 distortion_delta = 0.0001f;
     f32 fresnelFactor = 5.0f;
     f32 waveMotion_delta = 0.00002f;
-    f32 normalStrength = 0.28f;
+    f32 normalStrength = 0.5;
     f32 t_delta = 0.004f;
     b8 choppy = true;
     glm::vec3 baseColor = glm::vec3(0.064f, 0.085f, 0.12f);
-    f32 reflectionBlendFactor = 0.1f;
+    //glm::vec3 baseColor = glm::vec3(0.0f);
+    f32 reflectionBlendFactor = 0.0f;
     f32 capillarStrength = 1.0f;
     f32 capillarDownsampling = 8.0f;
     f32 dudvDownsampling = 1.0f;

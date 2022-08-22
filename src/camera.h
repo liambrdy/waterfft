@@ -15,11 +15,15 @@ struct Camera {
 
     glm::mat4 projection;
     glm::mat4 viewProj;
+    glm::mat4 originView;
+    glm::mat4 originViewProj;
     std::array<glm::vec4, 6> frustumPlanes;
 
     f32 width, height;
+    f32 lastXPos, lastYPos;
 
     glm::vec3 forward, right, up;
+    f32 yaw, pitch;
 };
 
 void CameraCreate(Camera *camera, glm::vec3 eye, float width, float height);

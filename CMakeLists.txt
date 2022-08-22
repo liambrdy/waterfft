@@ -20,6 +20,7 @@ find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)
 
 find_package(GLM REQUIRED)
+find_package(Assimp REQUIRED)
 
 add_subdirectory(deps/glad)
 
@@ -27,5 +28,5 @@ file(GLOB SRCS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 file(GLOB INCS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.h")
 
 add_executable(water ${SRCS} ${INCS})
-target_link_libraries(water PUBLIC ${GLFW_LIBRARIES} glad)
-target_include_directories(water PUBLIC ${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS})
+target_link_libraries(water PUBLIC ${GLFW_LIBRARIES} glad ${assimp_LIBRARIES})
+target_include_directories(water PUBLIC ${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${assimp_INCLUDE_DIRS})

@@ -38,6 +38,18 @@ void InitializeInput(GLFWwindow *window) {
             input.keyPressed[k] = false;
         }
     });
+
+    input.mouseMoved = false;
+    f64 x, y;
+    glfwGetCursorPos(window, &x, &y);
+    input.xMouse = x;
+    input.yMouse = y;
+
+    glfwSetCursorPosCallback(window, [](GLFWwindow *wnd, f64 xpos, f64 ypos) {
+        input.xMouse = xpos;
+        input.yMouse = ypos;
+        input.mouseMoved = true;
+    });
 }
 
 void UpdateInput() {
@@ -46,4 +58,6 @@ void UpdateInput() {
     }
 
     std::memset(input.keyPressed, 0, KeyCount);
+
+    input.mouseMoved = false;
 }

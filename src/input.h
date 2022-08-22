@@ -50,6 +50,9 @@ struct Input {
     b8 keyPressed[KeyCount];
 
     GLFWwindow *window;
+
+    f32 xMouse, yMouse;
+    b8 mouseMoved;
 };
 
 void InitializeInput(GLFWwindow *window);

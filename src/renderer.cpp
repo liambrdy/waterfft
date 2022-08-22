@@ -6,8 +6,9 @@ void RendererInit(u32 width, u32 height) {
     renderer.windowWidth = width;
     renderer.windowHeight = height;
 
-    CameraCreate(&renderer.camera, glm::vec3(0.0f, 3.0f, 0.0f), width, height);
+    CameraCreate(&renderer.camera, glm::vec3(0.0f, 100.0f, 0.0f), width, height);
     renderer.world = glm::mat4(1.0f);
+    renderer.zFar = 1000.0f;
 
     renderer.samples = 1;
     OffscreenFramebufferCreate(&renderer.primaryFbo, width, height, renderer.samples);
@@ -21,6 +22,8 @@ void RendererInit(u32 width, u32 height) {
     renderer.light.color = glm::vec3(1.0f, 0.95f, 0.87f);
     renderer.light.intensity = 1.0f;
     DeferredLightingCreate(&renderer.lighting);
+
+    SSAOCreate(&renderer.ssao, width, height);
 }
 
 void RendererBeginFrame() {
@@ -35,17 +38,21 @@ void RendererEndFrame() {
 
     FramebufferUnbind();
 
+    SSAORender(&renderer.ssao,
+               &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::Position),
+               &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::Normal));
+
     SampleCoverageRender(&renderer.sampleCoverage,
                          &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::Position),
                          &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::LightScattering),
                          &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::SpecularEmissionDiffuseSSAOBloom));
 
-    DeferredLightingRender(&renderer.lighting, &renderer.sampleCoverage.sampleCoverageMask,
+    DeferredLightingRender(&renderer.lighting, &renderer.sampleCoverage.sampleCoverageMask, &renderer.ssao.ssaoBlurTexture,
                            &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::Color),
                            &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::Position),
                            &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::Normal),
                            &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::SpecularEmissionDiffuseSSAOBloom));
 
-    //FullscreenQuadRenderMS(&renderer.quad, &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::Position));
+    //FullscreenQuadRender(&renderer.quad, &OffscreenFramebufferGetTexture(&renderer.primaryFbo, Attachment::Color));
     FullscreenQuadRender(&renderer.quad, &renderer.lighting.deferredLightingSceneTexture);
 }

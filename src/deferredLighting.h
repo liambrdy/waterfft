@@ -12,6 +12,6 @@ struct DeferredLighting {
 };
 
 void DeferredLightingCreate(DeferredLighting *lighting);
-void DeferredLightingRender(DeferredLighting *lighting, Texture *sampleCoverage, Texture *albedo, Texture *worldPosition, Texture *normal, Texture *specularEmissionDiffuseSsaoBloom);
+void DeferredLightingRender(DeferredLighting *lighting, Texture *sampleCoverage, Texture *ssaoBlur, Texture *albedo, Texture *worldPosition, Texture *normal, Texture *specularEmissionDiffuseSsaoBloom);
 
 #endif // DEFERREDLIGHTING_H_

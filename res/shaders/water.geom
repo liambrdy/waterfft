@@ -104,6 +104,7 @@ void main() {
         gl_ClipDistance[5] = dot(gl_Position, frustumPlanes[5]);
         outUV = inUV[i];
         outPos = positions[i].xyz;
+        //outPos = gl_Position.xyz;
         outTangent = tangent;
         EmitVertex();
     }
